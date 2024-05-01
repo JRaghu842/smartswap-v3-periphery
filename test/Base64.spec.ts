@@ -1,24 +1,28 @@
 import { ethers } from 'hardhat'
 import { base64Encode } from './shared/base64'
 import { expect } from './shared/expect'
-import { Base64Test } from '../typechain'
+import { Base64Test, } from '../typechain'
 import { randomBytes } from 'crypto'
 import snapshotGasCost from './shared/snapshotGasCost'
+import { Base64Test__factory } from '../typechain/factories/Base64Test__factory';
 
 function stringToHex(str: string): string {
   return `0x${Buffer.from(str, 'utf8').toString('hex')}`
 }
 
 describe('Base64', () => {
-  let base64: Base64Test
-  before('deploy test contract', async () => {
-    base64 = (await (await ethers.getContractFactory('Base64Test')).deploy()) as Base64Test
-  })
+  let base64: Base64Test;
 
-  describe('#encode', () => {
+  before('deploy test contract', async () => {
+    // Create an instance of the factory directly
+    const factory = (await ethers.getContractFactory('Base64Test')) as unknown as Base64Test__factory;
+    base64 = await factory.deploy();
+  });
+
+describe('#encode', () => {
     it('is correct for empty bytes', async () => {
-      expect(await base64.encode(stringToHex(''))).to.eq('')
-    })
+        expect(await base64.encode('')).to.eq('');
+    });
 
     for (const example of [
       'test string',
